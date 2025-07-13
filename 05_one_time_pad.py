@@ -18,17 +18,18 @@ def read_and_consume_key(filename, length):
     return used_key
 
 
-
 def otp_encrypt(plaintext, key):
     ciphertext = ''
     for p, k in zip(plaintext, key):
         if p == ' ':
             ciphertext += ' '
-        else:    
-            p_val = ord(p) - ord('A')
-            k_val = ord(k) - ord('A')
+        else:
+            p_val = ord(p) - ord('A') + 1  # A = 1, ..., Z = 26
+            k_val = ord(k) - ord('A') + 1
             c_val = (p_val + k_val) % 26
-            ciphertext += chr(c_val + ord('A'))
+            if c_val == 0:
+                c_val = 26
+            ciphertext += chr(c_val + ord('A') - 1)
     return ciphertext
 
 def otp_decrypt(ciphertext, key):
@@ -36,17 +37,19 @@ def otp_decrypt(ciphertext, key):
     for c, k in zip(ciphertext, key):
         if c == ' ':
             plaintext += ' '
-        else:    
-            c_val = ord(c) - ord('A')
-            k_val = ord(k) - ord('A')
+        else:
+            c_val = ord(c) - ord('A') + 1
+            k_val = ord(k) - ord('A') + 1
             p_val = (c_val - k_val + 26) % 26
-            plaintext += chr(p_val + ord('A'))
+            if p_val == 0:
+                p_val = 26
+            plaintext += chr(p_val + ord('A') - 1)
     return plaintext
 
 # === Example Usage ===
 if __name__ == "__main__":
     # plaintext = "UNIVERSITY OF RAJSHAHI BD"  
-    plaintext = "HELLO WORLD THIS IS A TEST MESSAGE"  
+    plaintext = "XYZ"  
     encrypt_key = read_and_consume_key("encrypt_key.txt", len(plaintext))
 
     print("Plaintext: ", plaintext)
